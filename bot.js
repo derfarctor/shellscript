@@ -18,7 +18,6 @@ client.once('ready', async () => {
     announcement_channel = client.channels.cache.get(ANNOUNCEMENT_CHANNEL_ID);
     if (!announcement_channel) {
         throw "Issue finding announcement channel. Terminated.";
-        return;
     }
     streamwatcher = announcement_channel.guild.roles.cache.find(r => r.id === ALERT_ROLE);
     if (!streamwatcher) {
@@ -43,7 +42,7 @@ client.on('messageCreate', async (message) => {
             await message.author.send("The streamwatcher role has been given to you. You will be pinged whenever mirthturtle starts streaming!");
             console.log(`Removed streamwatcher role from ${message.author.username}.`);
         } catch (error) {
-            console.log(`error`);
+            console.log(`There was an error adding streamwatcher role to ${message.author.username}: ${error}`);
             await message.author.send("There was an error giving you the streamwatcher role!");
         }
     }
@@ -60,7 +59,7 @@ client.on('messageCreate', async (message) => {
             await message.author.send("The streamwatcher role has been removed. Sorry to see you go!");
             console.log(`Added streamwatcher role to ${message.author.username}.`);
         } catch (error) {
-            console.log(error);
+            console.log(`There was an error removing streamwatcher role from ${message.author.username}: ${error}`);
             await message.author.send("There was an error removing the streamwatcher role!");
         }
     }
