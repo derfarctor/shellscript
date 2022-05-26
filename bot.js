@@ -40,7 +40,7 @@ client.on('messageCreate', async (message) => {
         try {
             await message.member.roles.add(streamwatcher);
             await message.author.send("The streamwatcher role has been given to you. You will be pinged whenever mirthturtle starts streaming!");
-            console.log(`Removed streamwatcher role from ${message.author.username}.`);
+            console.log(`Given streamwatcher role to ${message.author.username}.`);
         } catch (error) {
             console.log(`There was an error giving streamwatcher role to ${message.author.username}: ${error}`);
             await message.author.send("There was an error giving you the streamwatcher role!");
@@ -57,7 +57,7 @@ client.on('messageCreate', async (message) => {
         try {
             await message.member.roles.remove(streamwatcher);
             await message.author.send("The streamwatcher role has been removed. Sorry to see you go!");
-            console.log(`Added streamwatcher role to ${message.author.username}.`);
+            console.log(`Removed streamwatcher role from ${message.author.username}.`);
         } catch (error) {
             console.log(`There was an error removing streamwatcher role from ${message.author.username}: ${error}`);
             await message.author.send("There was an error removing the streamwatcher role!");
