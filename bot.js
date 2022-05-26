@@ -42,7 +42,7 @@ client.on('messageCreate', async (message) => {
             await message.author.send("The streamwatcher role has been given to you. You will be pinged whenever mirthturtle starts streaming!");
             console.log(`Removed streamwatcher role from ${message.author.username}.`);
         } catch (error) {
-            console.log(`There was an error adding streamwatcher role to ${message.author.username}: ${error}`);
+            console.log(`There was an error giving streamwatcher role to ${message.author.username}: ${error}`);
             await message.author.send("There was an error giving you the streamwatcher role!");
         }
     }
@@ -77,7 +77,9 @@ async function checkLive() {
                 'Client-ID': client_id
             }
         });
-        if (resp.data.data[0].type == "live") {
+        if (!resp.data.data.length) {
+            is_live = false;
+        } else if (resp.data.data[0].type == "live") {
             if (!is_live) {
                 is_live = true;
                 await alert_live();
@@ -92,6 +94,8 @@ async function checkLive() {
                 console.log("HTTP Error 401");
                 await refresh_token();
             }
+        } else {
+            console.log(`An error was encountered with the twitch api request: ${error}`);
         }
     }
 }
