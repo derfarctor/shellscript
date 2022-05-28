@@ -4,11 +4,13 @@ const axios = require("axios");
 const client = new Client({ intents: [Intents.FLAGS.GUILDS, Intents.FLAGS.GUILD_MESSAGES, Intents.FLAGS.DIRECT_MESSAGES] });
 const ANNOUNCEMENT_CHANNEL_ID = "705881658930233384";
 const ALERT_ROLE = "814917425019092993";
-const MIRTH_MESSAGES = ["Live in a few!", "Putting the tea on", "<:charlie:727649900602589234> <:charlie:727649900602589234> <:charlie:727649900602589234>", "OK I hit that scary button",
-    "omg what if I was live", "Ok I pressed the button", "First stream in 6 weeeeeks", "Aw yeah starting in a few", "Getting it started", "Starting in a few!",
-    "Let's goooo", "Alright it's stream watching time", "<:charlie:727649900602589234>", "It's tiiiiime", "Heyy starting on time for the first time ever",
-    "It's \"Go\" time", "Alright it is time", "On in a few!", "OK everything is perfect now, perfect stream", "Alright let's do thisss",
-    "Here we go!", "starting shortly!", "It is time", "Going live", "Going live!"];
+const MIRTH_MESSAGES = [
+    "<:charlie:727649900602589234> mirthturtle is streaming! Won't you come watch?",
+    "<:charlie:727649900602589234> mirthturtle's live! You don't want to miss this one...",
+    "<:charlie:727649900602589234> A mirthturtle stream begins! Don't miss this rare event...",
+    "<:charlie:727649900602589234> You are cordially invited to mirthturtle's stream, starting now!",
+    "<:charlie:727649900602589234> mirthturtle is live! Come say hi or you can also lurk creepily.",
+];
 let twitch_api_token;
 let announcement_channel;
 let streamwatcher;
@@ -34,16 +36,16 @@ client.on('messageCreate', async (message) => {
             await message.delete();
         }
         if (message.member.roles.cache.find(r => r === streamwatcher)) {
-            await message.author.send("You already have the streamwatcher role!");
+            await message.author.send("You're already a @streamwatcher! But now especially so.");
             return;
         }
         try {
             await message.member.roles.add(streamwatcher);
-            await message.author.send("The streamwatcher role has been given to you. You will be pinged whenever mirthturtle starts streaming!");
+            await message.author.send("Welcome, @streamwatcher! I'll ping you whenever mirthturtle starts streaming.");
             console.log(`Given streamwatcher role to ${message.author.username}.`);
         } catch (error) {
             console.log(`There was an error giving streamwatcher role to ${message.author.username}: ${error}`);
-            await message.author.send("There was an error giving you the streamwatcher role!");
+            await message.author.send("Something went wrong making you a @streamwatcher! Please complain directly to mirthturtle.");
         }
     }
     else if (message.content == "!out") {
@@ -51,16 +53,16 @@ client.on('messageCreate', async (message) => {
             await message.delete();
         }
         if (!message.member.roles.cache.find(r => r === streamwatcher)) {
-            await message.author.send("I'm pretty sure you don't currently have the streamwatcher role...");
+            await message.author.send("I'm pretty sure you're not currently a @streamwatcher...");
             return;
         }
         try {
             await message.member.roles.remove(streamwatcher);
-            await message.author.send("The streamwatcher role has been removed. Sorry to see you go!");
+            await message.author.send("OK, you won't receive @streamwatcher notifications anymore. Not from me, anyway...");
             console.log(`Removed streamwatcher role from ${message.author.username}.`);
         } catch (error) {
             console.log(`There was an error removing streamwatcher role from ${message.author.username}: ${error}`);
-            await message.author.send("There was an error removing the streamwatcher role!");
+            await message.author.send("Something went wrong removing your @streamwatcher role! Please complain directly to mirthturtle.");
         }
     }
 });
@@ -110,7 +112,7 @@ async function refresh_token() {
 async function alert_live() {
     console.log(`Making live announcement.`);
     let random = Math.floor(Math.random() * MIRTH_MESSAGES.length);
-    await announcement_channel.send(`<@&${ALERT_ROLE}> ${MIRTH_MESSAGES[random]} https://www.twitch.tv/mirthturtle`);
+    await announcement_channel.send(`<@&${ALERT_ROLE}> ${MIRTH_MESSAGES[random]} https://twitch.tv/mirthturtle`);
 }
 
 client.login(token);
