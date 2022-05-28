@@ -1,7 +1,8 @@
 const { Client, Intents } = require('discord.js');
 const { token, client_id, client_secret } = require('./config.json');
 const axios = require("axios");
-const client = new Client({ intents: [Intents.FLAGS.GUILDS, Intents.FLAGS.GUILD_MESSAGES, Intents.FLAGS.DIRECT_MESSAGES] });
+const client = new Client({ intents: [Intents.FLAGS.GUILDS, Intents.FLAGS.GUILD_MESSAGES, Intents.FLAGS.DIRECT_MESSAGES, Intents.FLAGS.GUILD_MEMBERS], partials: ['MESSAGE', 'CHANNEL'] });
+const MIRTH_GUILD_ID = "703321804600770602";
 const ANNOUNCEMENT_CHANNEL_ID = "705881658930233384";
 const ALERT_ROLE = "814917425019092993";
 const MIRTH_MESSAGES = [
@@ -25,24 +26,32 @@ client.once('ready', async () => {
     if (!streamwatcher) {
         throw "Issue finding streamwatcher role. Terminated.";
     }
+    await client.guilds.cache.get(MIRTH_GUILD_ID).members.fetch(); // Update members cache.
     client.user.setActivity("for streams...", { type: "WATCHING" });
     await refresh_token();
     startPolling();
 });
 
 client.on('messageCreate', async (message) => {
+    const mirth_guild = client.guilds.cache.get(MIRTH_GUILD_ID);
+    const member = mirth_guild.members.cache.get(message.author.id);
+    if (!member) {
+        await message.author.send("You need to be in mirthturtle's discord server to use SHELLSCRIPT!");
+        return;
+    }
     if (message.content == "!in") {
         if (message.guild) {
             await message.delete();
         }
-        if (message.member.roles.cache.find(r => r === streamwatcher)) {
+        if (member.roles.cache.has(ALERT_ROLE)) {
             await message.author.send("You're already a @streamwatcher! But now especially so.");
             return;
         }
         try {
-            await message.member.roles.add(streamwatcher);
+            await member.roles.add(streamwatcher);
             await message.author.send("Welcome, @streamwatcher! I'll ping you whenever mirthturtle starts streaming.");
             console.log(`Given streamwatcher role to ${message.author.username}.`);
+            await mirth_guild.members.fetch(); // Update member cache so that role change is immediately reflected.
         } catch (error) {
             console.log(`There was an error giving streamwatcher role to ${message.author.username}: ${error}`);
             await message.author.send("Something went wrong making you a @streamwatcher! Please complain directly to mirthturtle.");
@@ -52,14 +61,15 @@ client.on('messageCreate', async (message) => {
         if (message.guild) {
             await message.delete();
         }
-        if (!message.member.roles.cache.find(r => r === streamwatcher)) {
+        if (!member.roles.cache.has(ALERT_ROLE)) {
             await message.author.send("I'm pretty sure you're not currently a @streamwatcher...");
             return;
         }
         try {
-            await message.member.roles.remove(streamwatcher);
+            await member.roles.remove(streamwatcher);
             await message.author.send("OK, you won't receive @streamwatcher notifications anymore. Not from me, anyway...");
             console.log(`Removed streamwatcher role from ${message.author.username}.`);
+            await mirth_guild.members.fetch(); // Update member cache so that role change is immediately reflected.
         } catch (error) {
             console.log(`There was an error removing streamwatcher role from ${message.author.username}: ${error}`);
             await message.author.send("Something went wrong removing your @streamwatcher role! Please complain directly to mirthturtle.");
