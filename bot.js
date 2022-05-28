@@ -13,19 +13,13 @@ const MIRTH_MESSAGES = [
     "<:charlie:727649900602589234> mirthturtle is live! Come say hi or you can also lurk creepily.",
 ];
 let twitch_api_token;
+let mirth_guild;
 let announcement_channel;
 let streamwatcher;
 let is_live;
 client.once('ready', async () => {
     console.log('SHELLSCRIPT ready!');
-    announcement_channel = client.channels.cache.get(ANNOUNCEMENT_CHANNEL_ID);
-    if (!announcement_channel) {
-        throw "Issue finding announcement channel. Terminated.";
-    }
-    streamwatcher = announcement_channel.guild.roles.cache.find(r => r.id === ALERT_ROLE);
-    if (!streamwatcher) {
-        throw "Issue finding streamwatcher role. Terminated.";
-    }
+    await setup_globals();
     await client.guilds.cache.get(MIRTH_GUILD_ID).members.fetch(); // Update members cache.
     client.user.setActivity("for streams...", { type: "WATCHING" });
     await refresh_token();
@@ -33,7 +27,6 @@ client.once('ready', async () => {
 });
 
 client.on('messageCreate', async (message) => {
-    const mirth_guild = client.guilds.cache.get(MIRTH_GUILD_ID);
     const member = mirth_guild.members.cache.get(message.author.id);
     if (!member) {
         await message.author.send("You need to be in mirthturtle's discord server to use SHELLSCRIPT!");
@@ -76,6 +69,21 @@ client.on('messageCreate', async (message) => {
         }
     }
 });
+
+async function setup_globals() {
+    mirth_guild = client.guilds.cache.get(MIRTH_GUILD_ID);
+    if (!mirth_guild) {
+        throw "Issue finding mirthturtle's discord server. Terminated.";
+    }
+    announcement_channel = client.channels.cache.get(ANNOUNCEMENT_CHANNEL_ID);
+    if (!announcement_channel) {
+        throw "Issue finding announcement channel. Terminated.";
+    }
+    streamwatcher = announcement_channel.guild.roles.cache.find(r => r.id === ALERT_ROLE);
+    if (!streamwatcher) {
+        throw "Issue finding streamwatcher role. Terminated.";
+    }
+}
 
 async function startPolling() {
     setInterval(async function () { await checkLive(); }, 30 * 1000);
