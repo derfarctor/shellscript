@@ -26,6 +26,10 @@ client.once('ready', async () => {
     startPolling();
 });
 
+
+// Try to catch infrequent unhandled WebSocket error within discord.js
+client.on('error', console.error);
+
 client.on('messageCreate', async (message) => {
     const member = mirth_guild.members.cache.get(message.author.id);
     if (!member) {

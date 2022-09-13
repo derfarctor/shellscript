@@ -1,0 +1,5 @@
+{
+    "token": "Discord bot token",
+    "client_id": "Twitch application client id",
+    "client_secret": "Twitch application client secret"
+}
