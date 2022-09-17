@@ -27,8 +27,14 @@ client.once('ready', async () => {
 });
 
 
-// Try to catch infrequent unhandled WebSocket error within discord.js
+// Try to catch infrequent unhandled WebSocket error within discord.js to analyze later
 client.on('error', console.error);
+client.on('shardError', error => {
+    console.error('A websocket connection encountered an error:', error);
+});
+client.on('unhandledRejection', error => {
+    console.error('Unhandled promise rejection:', error);
+});
 
 client.on('messageCreate', async (message) => {
     const member = mirth_guild.members.cache.get(message.author.id);
