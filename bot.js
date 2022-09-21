@@ -27,13 +27,11 @@ client.once('ready', async () => {
 });
 
 
-// Try to catch infrequent unhandled WebSocket error within discord.js to analyze later
-client.on('error', console.error);
-client.on('shardError', error => {
-    console.error('A websocket connection encountered an error:', error);
-});
-client.on('unhandledRejection', error => {
-    console.error('Unhandled promise rejection:', error);
+// Catch infrequent unhandled WebSocket error within discord.js
+client.on('shardError', async (error) => {
+    console.error(`A websocket connection encountered an error at ${Date.now()}:`, error);
+    console.log("Fetching guild members manually.");
+    await client.guilds.cache.get(MIRTH_GUILD_ID).members.fetch(); // Update members cache.
 });
 
 client.on('messageCreate', async (message) => {
