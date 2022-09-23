@@ -20,7 +20,6 @@ let is_live;
 client.once('ready', async () => {
     console.log('SHELLSCRIPT ready!');
     await setup_globals();
-    await client.guilds.cache.get(MIRTH_GUILD_ID).members.fetch(); // Update members cache.
     client.user.setActivity("for streams...", { type: "WATCHING" });
     await refresh_token();
     startPolling();
@@ -30,12 +29,10 @@ client.once('ready', async () => {
 // Catch infrequent unhandled WebSocket error within discord.js
 client.on('shardError', async (error) => {
     console.error(`A websocket connection encountered an error at ${Date.now()}:`, error);
-    console.log("Fetching guild members manually.");
-    await client.guilds.cache.get(MIRTH_GUILD_ID).members.fetch(); // Update members cache.
 });
 
 client.on('messageCreate', async (message) => {
-    const member = mirth_guild.members.cache.get(message.author.id);
+    const member = await mirth_guild.members.fetch(message.author.id);
     if (!member) {
         await message.author.send("You need to be in mirthturtle's discord server to use SHELLSCRIPT!");
         return;
@@ -52,7 +49,6 @@ client.on('messageCreate', async (message) => {
             await member.roles.add(streamwatcher);
             await message.author.send("Welcome, @streamwatcher! I'll ping you whenever mirthturtle starts streaming.");
             console.log(`Given streamwatcher role to ${message.author.username}.`);
-            await mirth_guild.members.fetch(); // Update member cache so that role change is immediately reflected.
         } catch (error) {
             console.log(`There was an error giving streamwatcher role to ${message.author.username}: ${error}`);
             await message.author.send("Something went wrong making you a @streamwatcher! Please complain directly to mirthturtle.");
@@ -70,7 +66,6 @@ client.on('messageCreate', async (message) => {
             await member.roles.remove(streamwatcher);
             await message.author.send("OK, you won't receive @streamwatcher notifications anymore. Not from me, anyway...");
             console.log(`Removed streamwatcher role from ${message.author.username}.`);
-            await mirth_guild.members.fetch(); // Update member cache so that role change is immediately reflected.
         } catch (error) {
             console.log(`There was an error removing streamwatcher role from ${message.author.username}: ${error}`);
             await message.author.send("Something went wrong removing your @streamwatcher role! Please complain directly to mirthturtle.");
@@ -123,7 +118,7 @@ async function checkLive() {
                 await refresh_token();
             }
         } else {
-            console.log(`An error was encountered with the twitch api request: ${error}`);
+            console.log(`An error was encountered with the twitch api request at ${Date.now()}: ${error}`);
         }
     }
 }
