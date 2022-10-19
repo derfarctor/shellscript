@@ -31,6 +31,14 @@ client.on('shardError', async (error) => {
     console.error(`A websocket connection encountered an error at ${Date.now()}:`, error);
 });
 
+client.on('unhandledRejection', error => {
+    console.error(`An unhandled rejection encountered at ${Date.now()}:`, error);
+});
+
+client.on('error', error => {
+    console.error(`An error encountered at ${Date.now()}:`, error);
+});
+
 client.on('messageCreate', async (message) => {
     const member = await mirth_guild.members.fetch(message.author.id);
     if (!member) {
