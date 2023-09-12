@@ -6,11 +6,11 @@ const MIRTH_GUILD_ID = "703321804600770602";
 const ANNOUNCEMENT_CHANNEL_ID = "705881658930233384";
 const ALERT_ROLE = "814917425019092993";
 const MIRTH_MESSAGES = [
-    "<:charlie:727649900602589234> mirthturtle is streaming! Won't you come watch?",
-    "<:charlie:727649900602589234> mirthturtle's live! You don't want to miss this one...",
-    "<:charlie:727649900602589234> A mirthturtle stream begins! Don't miss this rare event...",
-    "<:charlie:727649900602589234> You are cordially invited to mirthturtle's stream, starting now!",
-    "<:charlie:727649900602589234> mirthturtle is live! Come say hi or you can also lurk creepily.",
+    "mirthturtle is streaming! Won't you come watch? <:charlie:727649900602589234>",
+    "mirthturtle's live! You don't want to miss this one... <:charlie:727649900602589234>",
+    "A mirthturtle stream begins! Don't miss this special event... <:charlie:727649900602589234>",
+    "You are cordially invited to mirthturtle's stream, starting now! <:charlie:727649900602589234>",
+    "mirthturtle is live! Come say hi or you can also lurk creepily. <:charlie:727649900602589234>",
 ];
 let twitch_api_token;
 let mirth_guild;
